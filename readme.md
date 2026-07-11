@@ -1,18 +1,6 @@
 yt-gate-study-mcp-server
 This project is about creating a MCP server for the Youtube video, to do multiple task
 
-Claude Code
-
-↓
-
-"Create today's practice sheet."
-
-↓
-
-Study MCP
-
-↓
-
 Find latest watched YouTube video
 
 ↓
@@ -25,8 +13,36 @@ Download transcript
 
 ↓
 
+Translate transcript to English (if needed)
+
+↓
+
 Extract concepts
 
 ↓
 
-Return results to Claude
+Determine subject
+
+↓
+
+Search previous year questions
+
+↓
+
+Analyze trends
+
+↓
+
+Generate exam-style questions
+
+↓
+
+Generate answers
+
+↓
+
+Generate PDF
+
+↓
+
+Save notes
