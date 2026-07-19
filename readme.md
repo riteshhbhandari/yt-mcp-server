@@ -1,32 +1,40 @@
-yt-gate-study-mcp-server
-This project is about creating a MCP server for the Youtube video, to do multiple task
+Ministry of Competitive Exams
 
-Claude Code
+"Building AI tools that actually help students.
+No committees. No delays. Just results."
 
-↓
+User
+      │
+      ▼
+Paste YouTube URL
+      │
+      ▼
+Extract Video ID
+      │
+      ▼
+Download Transcript
+      │
+      ▼
+Translate to English
+      │
+      ▼
+Gemini extracts topics
+      │
+      ▼
+Gemini searches internet
+      │
+      ▼
+Find GATE PYQs
+      │
+      ▼
+Store in SQLite
+      │
+      ▼
+Generate PDF
+      │
+      ▼
+User downloads PDF
 
-"Create today's practice sheet."
+MCP server only does 4 things 
+start server -> regiter tools -> recieve request -> return result
 
-↓
-
-Study MCP
-
-↓
-
-Find latest watched YouTube video
-
-↓
-
-Ask for confirmation
-
-↓
-
-Download transcript
-
-↓
-
-Extract concepts
-
-↓
-
-Return results to Claude
