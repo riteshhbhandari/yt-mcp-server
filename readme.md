@@ -38,3 +38,39 @@ User downloads PDF
 MCP server only does 4 things 
 start server -> regiter tools -> recieve request -> return result
 
+
+gate-study-assistant/
+
+│
+├── app.py
+│
+├── config.py
+│
+├── requirements.txt
+│
+├── .env
+│
+├── database.py
+│
+├── models.py
+│
+├── pdf_generator.py
+│
+├── transcript.py
+│
+├── translator.py
+│
+├── topic_extractor.py
+│
+├── gate_search.py
+│
+├── storage.py
+│
+├── prompts.py
+│
+├── output/
+│
+├── database/
+│      gate.db
+│
+└── utils.py

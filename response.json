@@ -1,0 +1,31 @@
+{
+  "subject": "Computer Organization & Architecture",
+  "topics": [
+    "Magnetic Disk",
+    "Platters",
+    "Spindle",
+    "Read-Write Head",
+    "Arm Assembly",
+    "Tracks",
+    "Sectors",
+    "Constant Sector Capacity",
+    "Variable Sector Density",
+    "Constant Angular Velocity",
+    "Disk Capacity",
+    "Disk Access Time",
+    "Seek Time",
+    "Rotational Latency",
+    "Transfer Time",
+    "Transfer Rate",
+    "Cylinder",
+    "Disk Addressing",
+    "Memory Hierarchy",
+    "Main Memory",
+    "RAM",
+    "ROM",
+    "SRAM",
+    "DRAM",
+    "Chip Select",
+    "DRAM Refresh"
+  ]
+}

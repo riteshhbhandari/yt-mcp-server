@@ -1,0 +1,74 @@
+from prompt import TOPIC_EXTRACTOR_PROMPT
+from config import GEMINI_API_KEY, MODEL
+from google import genai
+import json
+import database
+
+client = genai.Client(api_key=GEMINI_API_KEY) 
+
+def extract_topics(transcript_dict : dict):
+    if(database.get_video(transcript_dict['video_id']) is not None):
+        print("Topics already exists in database. Fetching topics from database.")
+        result = database.get_topics(transcript_dict['video_id'])
+        return result
+        
+    else:
+        prompt = TOPIC_EXTRACTOR_PROMPT.format(
+            transcript= transcript_dict['text'] )
+
+        response = client.models.generate_content(
+                    model=MODEL,
+                    contents=prompt
+                )
+        # gemini response 
+        #     sdk_http_response=HttpResponse(
+        # headers=<dict len=12>
+        # ) candidates=[Candidate(
+        # content=Content(
+        #     parts=[
+        #     Part(
+        #         text="""{
+        # "subject": "Computer Organization and Architecture",
+        # "topics": [
+        # "Magnetic Disk Structure (Platters, Tracks, Sectors)",
+        # "Disk Performance Metrics (Seek Time, Rotational Latency, Transfer Time)",
+        # "Disk Capacity Calculation",
+        # "CHS (Cylinder-Head-Sector) Addressing",
+        # "Memory Hierarchy",
+        # "SRAM vs DRAM",
+        # "DRAM Refreshing and Overhead"
+        # ]
+        # }""",
+        #         thought_signature=b'\x12\xe9\x15\n\xe6\x15\x01\x11M2\x0f\xd4\xdd\xa1m!8\x1eyq!\xffW#\xef\ng\xa9.\x88F\xfa"\\\xf0\x85\x1f\'P(I\xb8Z\x16\x0b\x8c\xb7\xee\xa6\xbce?\xdf\xe6\xb4\xdfy\xf7\x1a%\x81\xa7A\xa8\xf2\n\xba\x86l\x05\xc2\xd3&\xd1\xeb\x8b\x8cU\xdfw\xd6\xc1x\xf5,\x80\xd9Ug\xfd\xa1X\xeeCi\x0e5...'
+        #     ),
+        #     ],
+        #     role='model'
+        # ),
+        # finish_reason=<FinishReason.STOP: 'STOP'>,
+        # index=0
+        # )] create_time=None model_version='gemini-3-flash-preview' prompt_feedback=None response_id='5FdqavX_HNj_juMPuqn-2Ao' usage_metadata=GenerateContentResponseUsageMetadata(
+        # candidates_token_count=91,
+        # prompt_token_count=2851,
+        # prompt_tokens_details=[
+        #     ModalityTokenCount(
+        #     modality=<MediaModality.TEXT: 'TEXT'>,
+        #     token_count=2851
+        #     ),
+        # ],
+        # thoughts_token_count=659,
+        # total_token_count=3601
+        # ) model_status=None automatic_function_calling_history=[] parsed=None
+
+        response= json.loads(response.text.strip())
+        #store in database
+        database.store_topics(transcript_dict['video_id'], response)
+        return response
+
+# this is going to return a dictionary with keys "subject" and "topics" where topics is a list of topics
+# {'subject': 'Computer Organization and Architecture', 'topics': ['Magnetic Disk Structure', 'Disk Capacity and Addressing', 'Disk Access Time (Seek Time, Rotational Latency, Transfer Time)', 'Cylinder-Head-Sector (CHS) Model', 'Memory Hierarchy', 'SRAM vs DRAM', 'DRAM Refresh and Organization', 'RAM and ROM Chips']}
+
+if __name__ == "__main__":
+    result = extract_topics ({'video_id':'xyz1',
+        'text':'Hello everyone, good morning, good afternoon, and good evening. My name is Vishvadeep, and I welcome you to the PW GATE Wallah channel. Today is the final session of our COA crash course, in which we will cover the last two topics: Memory Organization and Disk. So, let’s quickly start this session. But before that, tell me, is everyone ready for today? Excited? I am very happy because we finished this entire course in 10 days. We reviewed it quickly. Those who wanted to revise have done so. Those who were studying for the first time understood things reasonably well. Of course, it’s a crash course, so you can only understand so much. But still, we covered a significant amount. And the best part was my interaction with you all through Telegram Live. Comment quickly in the box, friends. Your comments are very important. That is how the fun in your learning and mine will increase.\n\nOkay. I can see many students were waiting here. Great. Good enough. Where are the comments? Let me refresh this page once more; maybe I will see the comments more quickly. Yes, I see many comments here. Someone is saying, "Sir, feeling depressed." Look, remember one thing in life—don\'t use the word "depression" just because you are sad or feeling low. Depression is a medically deep term; it is an illness. If you truly have depression, you need medical help and must see a doctor. But that is not actually your case. You are just sad because things aren\'t going in your favor. So, remove this word from your life. Never use it. Never. Even if we feel bad or low, we don\'t use it. Now, regarding your "feeling low"—why? Laid off from your company? No, son, this is a normal thing. There are many thousands of people getting laid off from many companies. Even very talented people are being laid off from big companies like Google and Microsoft. So it\'s fine. It is not a lack of skill on your part; the company\'s balance sheets aren\'t working correctly. So it\'s all fine.\n\nWe will start today directly with the Disk—the magnetic disk. A magnetic disk is made of platters like this. Many round platters are stacked together, as you can see here. CD or DVD type disks are similar, but those are optical disks. This is magnetic; that is the only difference. Multiple platters are attached in a single disk in one computer system. The biggest specialty of this disk is that both its surfaces—top and bottom—can store data. Every plate has two surfaces. If you have 10 platters (referred to as platters), you get 20 storage surfaces, two on each. All these platters rotate to access data. How? There is a column-like structure in the middle called a Spindle. All platters are connected to this spindle. This spindle rotates. As the motor rotates, all these platters rotate as well. What is this column-like structure called? Spindle.\n\nNow, to read or write content on these surfaces, there is a pointer called the Read-Write Head. There is one Read-Write Head for every surface so that the specific head is used for the surface where content needs to be read or written. You either store (write) to the disk or read from it using this pointer. The benefit of having so many Read-Write Heads is that if you need to read here and then there, you don\'t need to move the pointer mechanically between surfaces, which saves time. However, only one Read-Write Head is active at a time for reading/writing. Parallel work does not happen here; remember that. The Read-Write Heads are not just hanging in the air; they are connected to Arms, which are connected to an Arm Assembly. Why are they called arms? Because they move the Read-Write Head back and forth to cover the surface, similar to how a human arm moves. All arms move together; they do not move individually. If one head moves toward the center, all heads move toward the center simultaneously. You can see the arm in the diagram here.\n\nYou should now understand the overall structure: the Spindle in the middle, three platters with two surfaces each, Read-Write Heads connected to arms, and the arm assembly. Now, we need to understand how the entire surface is covered. There are two types of movement: the Read-Write Head performs linear movement via the arm, and the disk rotates. To store data, I place the head at a specific radius and rotate the disk completely. This covers one circle, and data is stored on that circle. Then I move the head slightly and rotate again to cover the next circle. These circles are called Tracks. So, a surface is divided into many concentric Tracks. \n\nThese tracks are further divided into small Sectors. In mathematics, a sector is a full "pizza slice," but in disk study, a sector refers to a small portion of a single track. These are the smallest units of the disk that can be read or written at once. Every sector gets an address. If we have 8 sectors per track and 5 tracks, that is 40 sectors per surface. If there are 6 surfaces, the total is 240 sectors for the entire disk. \n\nWhy divide into sectors? Just as a "cell" is the smallest unit of Main Memory with a unique address, a Sector is the smallest unit of a disk. Every sector gets an address. Now, inner sectors look smaller than outer sectors in terms of area. Does that mean they store different amounts of data? In modern disks (the default today), we use Constant Sector Capacity. Even if the area is larger, the amount of data is the same. This is called Variable Sector Density. This type of disk is also known as Constant Angular Velocity (CAV) because the disk takes the same amount of time for one full rotation every time. \n\nDisk Capacity Formula:\n$2 \\times \\text{Number of Platters} \\times \\text{Tracks per Surface} \\times \\text{Sectors per Track} \\times \\text{Bytes per Sector}$.\n\nDisk Access Time:\nThe most time is spent reaching the sector where we need to read or write. \n1. Seek Time: Time to move the arm to the desired track. This is mechanical and takes time.\n2. Rotational Latency (or Rotational Delay): Time to rotate the disk so the target sector comes under the Read-Write Head.\n3. Transfer Time: Time required to actually read or write the data in the sector.\n\nDisk Access Time = $\\text{Seek Time} + \\text{Rotational Latency} + \\text{Transfer Time} + \\text{Any Additional Delay}$.\nAverage Rotational Latency is usually taken as half of the time for one rotation.\nKey Point: In one full rotation, an entire track can be transferred. \nTherefore, One Sector Transfer Time = $\\text{Rotation Time} / \\text{Sectors per Track}$.\n\nExample Problem:\nDisk with 16 platters, 2 surfaces/platter, 1K tracks/surface, 1K sectors/track, 2048 bytes/sector. Rotates at 3000 RPM. Seek time = 10ms.\n1. Capacity: $2 \\times 16 \\times 1024 \\times 1024 \\times 2048 = 2^{36} \\text{ bytes} = 64\\text{GB}$.\n2. Addressing Bits: Each sector gets an address. Total sectors = $2 \\times 16 \\times 1K \\times 1K = 2^{25}$. Therefore, 25 bits are required for addressing.\n3. Access Time: \n   - One rotation time = $60,000\\text{ms} / 3000\\text{RPM} = 20\\text{ms}$.\n   - Rotational Latency = $20 / 2 = 10\\text{ms}$.\n   - Sector Transfer Time = $20\\text{ms} / 1024 \\approx 0.02\\text{ms}$.\n   - Access Time = $10\\text{ms} (\\text{Seek}) + 10\\text{ms} (\\text{Latency}) + 0.02\\text{ms} (\\text{Transfer}) = 20.02\\text{ms}$.\n4. Transfer Rate: A 2MB track is transferred in 20ms. Rate = $2\\text{MB} / 20\\text{ms} = 100\\text{MB/s}$. This speed is used to calculate "preparation time" in DMA.\n\nIf a file spans multiple sectors:\n- If Sequential: $\\text{Seek Time} + \\text{Rotational Latency} + (N \\times \\text{Sector Transfer Time})$.\n- If Random: $N \\times (\\text{Seek Time} + \\text{Rotational Latency} + \\text{Sector Transfer Time})$.\n\nCylinder Concept:\nSince all Read-Write Heads move together, tracks of the same radius across all surfaces form a "Cylinder." Data is stored cylinder-wise to improve performance by avoiding unnecessary Seek Time. \n- Number of Cylinders = Number of Tracks per Surface.\n- Number of Sectors per Cylinder = $\\text{Number of Surfaces} \\times \\text{Sectors per Track}$.\n\nDisk Addressing:\nAddresses are often represented as CHS (Cylinder, Head, Sector). \n- Sector Number = $(C \\times \\text{Sectors per Cylinder}) + (H \\times \\text{Sectors per Track}) + S$.\n[The instructor walks through the GATE 2009 problem using these formulas].\n\nMemory Hierarchy:\nWe use a hierarchy (Registers -> Cache -> Main Memory -> Disk) to maximize access speed while minimizing cost.\nMemory Representation: $\\text{Number of Cells} \\times \\text{Cell Capacity}$. \nExample: $128\\text{K} \\times 16\\text{ bits}$. If the unit isn\'t specified, the default is "bits."\n\nMain Memory:\nConsists of RAM and ROM. RAM is volatile (loses data without power). When a computer starts, the RAM is empty. The CPU runs a program from the non-volatile ROM (BIOS) which checks hardware and performs "Booting"—loading the Operating System from the Disk into the RAM.\nRAM Types:\n1. SRAM (Static RAM): Made of flip-flops. Fast, expensive, used for Cache. No refresh needed.\n2. DRAM (Dynamic RAM): Made of capacitors. Stores data as electric charge, which leaks. Requires periodic refresh. Slower, cheaper, used for Main Memory. During refresh, Read/Write cannot occur.\n\nRAM and ROM Chips:\nChips require an Address Bus, Data Bus, and a Chip Select (CS) signal. CS allows the CPU to specify which hardware chip it is talking to. ROM only needs a CS and address; it doesn\'t usually need a "Write" signal because it is Read-Only.\nTotal Memory Capacity = $\\text{Number of chips} \\times \\text{Capacity of one chip}$.\n\nDRAM Refresh:\nA DRAM chip is organized as a matrix of rows and columns of cells. In one refresh operation, an entire Row of cells is refreshed.\n- Total Chip Refresh Time = $\\text{Number of Rows} \\times \\text{Time for one row refresh}$.\nMultiple chips in a system refresh in parallel. During refresh, the CPU cannot access the memory. \n[The instructor walks through the GATE 2010 and 2018 refresh problems]. If a refresh takes 2ms out of a 10ms period, only 8ms (80%) is available for Read/Write operations.\n\nThis concludes our crash course. I am happy; I hope you are too. Memory Organization and Disk are over. I will see you again for the Operating Systems course, which starts at the end of this month. Don\'t forget that TOC and C Programming sessions start today as well. C Programming is very scoring, so don\'t miss it. My success is defined by your results. Work hard, and I look forward to that "thank you" message after you clear the GATE exam.\n\nRegarding my salary—it is whatever you imagine it to be, from 100 rupees to whatever you think! If you need to skip subjects due to time, Computer Networks and Discrete Math are large but have similar weightage to smaller subjects, so you could consider prioritizing others. Focus on what you are confident in. \n\nThank you so much. Happy learning, keep learning happily. Soon the \'L\' will be removed, and it will be "Happy Earning!" Goodbye. '}
+        )
+    print(result)
