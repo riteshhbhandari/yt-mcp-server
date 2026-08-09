@@ -9,18 +9,10 @@ client = genai.Client(api_key=GEMINI_API_KEY)
 
 def search_internet(subject: str, topic: list):
     prompt = INTERNET_SEARCH_PROMPT.format(subject=subject, topic=topic)
-
     response = client.models.generate_content(
-    model=MODEL,
-    contents=prompt,
-    config=types.GenerateContentConfig(
-        tools=[
-            types.Tool(
-                google_search=types.GoogleSearch()
+                model=MODEL,
+                contents=prompt
             )
-        ]
-    )
-    )
     print(response.text)
     return response.text
 

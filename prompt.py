@@ -65,19 +65,19 @@ INTERNET_SEARCH_PROMPT = """Search the web.
 
         Find authentic GATE Previous Year Questions related to
 
-        Subject:
-        {subject}
+        Subject: {subject}
 
-        Topic:
-        {topic}
+        Topic: {topic}
 
         For each question provide
-
-        - Year
-        - Question
+        - GATE year
+        - question
+        - options
+        - correct answer
+        - source URL
 
         Rules:
-        - Give as many questions as possible 
+        - Give 20 questions lastest. 
         - Exactly quote the internet.
         - Do not add anything extra.
 
