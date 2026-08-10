@@ -110,17 +110,16 @@ def get_transcript(url: str) -> dict:
         
         #Store the transcript and meta data
         #Save this transcript in data base
-        if(database.store_transcript(video_id,full_text, video_meta_data)):
-            print("Sucessfully stored the transcript in database.")
 
-        return {"video_id": video_id, "text": full_text}
+        # if(database.store_transcript(video_id,full_text, video_meta_data)):
+        #     print("Sucessfully stored the transcript in database.")
     
     else: 
         print("Video ID" + video_id)
         print("Video found in database.")
 
         full_text = database.get_transcript_from_db(video_id)
-        return {"video_id": video_id, "text": full_text}
+    return {"video_id": video_id, "text": full_text, 'video_meta_data': video_meta_data}
 
 def translate_to_english(transcript: str, language: str) -> str:
     prompt = LANGUAGE_TRANSLATION_PROMPT.format(transcript=transcript, language=language)

@@ -75,6 +75,7 @@ INTERNET_SEARCH_PROMPT = """Search the web.
         - options
         - correct answer
         - source URL
+        - difficulty level (easy, medium, hard)
 
         Rules:
         - Give 20 questions lastest. 
@@ -89,6 +90,7 @@ INTERNET_SEARCH_PROMPT = """Search the web.
         "Subject":"Operating Systems",
         "Topics":"Deadlock",
         "Year":"2019",
+        "Difficulty":"Medium",
         "Question":"Explain the necessary conditions for deadlock in operating systems."
         }}
         """
