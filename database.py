@@ -61,6 +61,8 @@ def store_transcript(video_id: str, transcript: str, metadata: dict):
                 "description" : metadata.get("description")
             }
         )
+    print("Transcript stored successfully in table : transcript")
+
 def get_transcript_from_db(video_id: str) -> str:
     with engine.begin() as connection:
         result = connection.execute(
@@ -75,17 +77,17 @@ def get_transcript_from_db(video_id: str) -> str:
         return row[0] if row else ""
 
 #store the topics in database and link it to the subject ID
-def store_topics(video_id: str, topics: list):
+def store_topics(video_id: str, subject: str, topics: list):
     with engine.begin() as connection:
         result = connection.execute(
             text("""SELECT id FROM subjects WHERE subject_name = :subject_name"""),
-            {"subject_name": topics["subject"]}
+            {"subject_name": subject}
             )
         subject_id = result.scalar()
         print ("subject_id", subject_id)
 
         
-        for topic in topics["topics"]:
+        for topic in topics:
             #store the topic in topic table with subject_id
             connection.execute(
                 text("""
@@ -118,6 +120,7 @@ def store_topics(video_id: str, topics: list):
                     "topic_id": topic_id
                 }
             )
+        print("Topic stored successfully in table : topic")
 
 def get_topics(video_id: str) -> dict:
     with engine.begin() as connection:
@@ -145,6 +148,27 @@ def get_topics(video_id: str) -> dict:
 
         #returns in form of dict
         return {"subject": subject_name, "topics": topics}
+
+def store_questions(question_data: dict):
+    with engine.begin() as connection:
+        for question in question_data.get("Question", []):
+            connection.execute(
+                text("""
+                    INSERT INTO questions (question_text, options, correct_answer, source_url, gate_year, subject, topic, difficulty)
+                    VALUES (:question_text, :options, :correct_answer, :source_url, :gate_year, :subject, :topic)
+                """),
+                {
+                    "question_text": question.get("question"),
+                    "options": question.get("options"),
+                    "correct_answer": question.get("correct_answer"),
+                    "source_url": question.get("source_url"),
+                    "gate_year": question.get("gate_year"),
+                    "subject": question_data.get("subject"),
+                    "topic": question_data.get("topic")
+                }
+            )
+    print("Questions stored successfully in table : questions")
+
 #dummy_data
 def dummy_data():
     with engine.begin() as connection:
