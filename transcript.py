@@ -87,7 +87,7 @@ def get_transcript(url: str) -> dict:
             print("transcript_language", transcript_language)
             print("language: " + transcript.language_code)
 
-            if(transcript.language_code != "en"):
+            if(transcript.language_code != "en" or "en-IN" ):
                 transcript_list= YouTubeTranscriptApi().fetch(
                     video_id,
                     languages=[transcript.language_code])

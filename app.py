@@ -23,7 +23,7 @@ def main():
     try:
         transcript = get_transcript(url)
         topic = extract_topics(transcript)
-        internet= search_internet(topic['subject'], topic['topics']);
+        internet= search_internet(topic);
     except (ValueError, RuntimeError) as e:
         print(f"Error: {e}")
         return

@@ -37,6 +37,7 @@ TOPIC_EXTRACTOR_PROMPT = """
                 Database Management Systems
                 Computer Networks
                 General Aptitude
+                Discrete Mathematics 
         2. If the subject is not related to GATE compute science and engineering, return "Not related to GATE CSE" as the subject and an empty list of topics.
         3. The important topics discussed.
         4. Strictly give the topic name only, do not give any explanation or description
@@ -81,6 +82,7 @@ INTERNET_SEARCH_PROMPT = """Search the web.
         - Give 20 questions lastest. 
         - Exactly quote the internet.
         - Do not add anything extra.
+        - topic should always be from the topic list 
 
 
         Return JSON only.
