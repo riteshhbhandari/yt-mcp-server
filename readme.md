@@ -74,3 +74,6 @@ gate-study-assistant/
 │      gate.db
 │
 └── utils.py
+
+
+Next step is how do i connect this new created frontend website to my this backend
